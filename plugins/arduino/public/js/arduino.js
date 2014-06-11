@@ -27,6 +27,20 @@ require([ "jquery", "/socket.io/socket.io.js" ], function() {
     $('*[data-id="' + data.id + '"][data-value="' + data.value + '"]').addClass('active');
   });
   /**
+  /**
+   * Touchplate active high status switched
+   */
+  socket.on('arduino-touchplateah', function(data) {
+    $('*[data-id="' + data.id + '"][data-value="' + data.value + '"]').addClass('disabled');
+    $('*[data-id="' + data.id + '"][data-value="' + data.value + '"]').attr('disabled','disabled');
+    setTimeout(function() {
+      $('*[data-id="' + data.id + '"][data-value="' + data.value + '"]').removeAttr('disabled');
+      $('*[data-id="' + data.id + '"]').removeClass('disabled');
+     }, 1200);
+  });
+
+
+  /**
    * Arduino sensor data received
    */
   socket.on('arduino-sensor', function(data) {
