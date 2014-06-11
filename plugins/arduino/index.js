@@ -53,6 +53,9 @@ define([ 'duino' ], function(duino) {
       socket.on('arduino-activelow', function(data) {
         that.activelow(data);
       });
+      socket.on('arduino-touchplate', function(data) {
+        that.touchplate(data);
+      });
       });
     });
     
@@ -190,6 +193,44 @@ define([ 'duino' ], function(duino) {
         }else {
           that.pins[item.pin].off();
         }
+      } else {
+        console.log(err);
+      }
+    });
+  };
+  /**
+   * Turn an Activelow Touchplate relay on
+   * 
+   * @method Activelow
+   * @param {Object} data The websocket data from the client
+   * @param {String} data.id The ID of the database entry from the LED to use
+   * @param {String} data.value The value 0 every time to trigger .5 sec send.
+   */
+  Arduino.prototype.touchplate = function(data) {
+
+    var that = this;
+    this.pluginHelper.findItem(that.collection, data.id, function(err, item, collection) {
+      if ((!err) && (item)) {
+        // Inform clients over websockets
+        that.app.get('sockets').emit('arduino-touchplate', data);
+
+        item.value = (parseInt(data.value));
+        that.values[item._id] = item.value;
+
+        // Create LED object
+        if (!that.pins[item.pin]) {
+          that.pins[item.pin] = new duino.Touchplate({
+            board: that.board,
+            pin: parseInt(item.pin),
+            groupid: parseInt(item.groupid)
+          });
+        }
+
+        // Change Light status
+        if(item.value == "1"){
+          that.pins[item.pin].relay();
+        }
+
       } else {
         console.log(err);
       }

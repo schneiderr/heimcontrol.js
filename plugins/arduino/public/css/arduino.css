@@ -13,3 +13,6 @@
 .plugin-container.arduino.activelow:after {
   content: "Arduino ActiveLow";
 }
+.plugin-container.arduino.touchplate:after {
+  content: "Arduino Touchplate";
+}
